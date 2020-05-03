@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def get():
-    return "Hello There!"
+    return jsonify({'testic' : "Hello madafaka"})
 
 # Run Server
 if __name__ == '__main__':
