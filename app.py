@@ -1,12 +1,6 @@
-from flask import Flask, request, jsonify
+from pc_builder.views import app
+import os
 
-# Init app
-app = Flask(__name__)
-
-@app.route('/testic')
-def get():
-    return jsonify({'testic' : "Hello madafaka"})
-
-# Run Server
-if __name__ == '__main__':
-    app.run(debug=True)
+app.secret_key = os.urandom(24)
+port = int(os.environ.get('PORT', 5000))
+app.run(host='0.0.0.0', port=port)
