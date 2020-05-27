@@ -92,49 +92,6 @@ class User:
         else:
             return False
 
-    def serve_motherboards(self, cpu):
-        motherboardList = graph.run(
-            "MATCH (motherboard:Motherboard)-[:COMPATIBLE]->(cpu:CPU {name: '%s'}) return motherboard"
-            % cpu
-        ).data()
-        return motherboardList
-
-    def serve_rams(self):
-        ramList = graph.run("MATCH (ram:RAM) RETURN ram").data()
-        return ramList
-
-    def serve_storages(self):
-        storageList = graph.run("MATCH (storage:Storage) RETURN storage").data()
-        return storageList
-
-    def serve_video_cards(self):
-        video_cardList = graph.run(
-            "MATCH (video_card:Video Card) RETURN video_card"
-        ).data()
-        return video_cardList
-
-    def serve_cpu_coolers(self):
-        cpu_coolerList = graph.run(
-            "MATCH (cpu_cooler:CPU Cooler) RETURN cpu_cooler"
-        ).data()
-        return cpu_coolerList
-
-    def serve_cases(self):
-        caseList = graph.run("MATCH (case:Case) RETURN case").data()
-        return caseList
-
-    def serve_power_supplies(self):
-        power_supplyList = graph.run(
-            "MATCH (power_supply:Power Supply) RETURN power_supply"
-        ).data()
-        return power_supplyList
-
-    def serve_operating_systems(self):
-        operating_systemList = graph.run(
-            "MATCH (operating_system:Operating System) RETURN operating_system"
-        ).data()
-        return operating_systemList
-
     def add_pcbuild(
         self,
         cpu,
@@ -173,6 +130,61 @@ class User:
 
         return jsonify(response="success")
 
+    def delete_pcbuild(self, id):
+        user = self.find()
+        graph.run(
+            "MATCH (user:User),(build:Build) where user.username = '%(username)s' and build.id = '%(buildID)s' detach delete build"
+            % {"username": user[0]["user"]["username"], "buildID": id}
+        )
+        return jsonify(response="success")
+
 
 def serve_cpus():
     return graph.run("MATCH (cpu:CPU) RETURN cpu").data()
+
+
+def serve_motherboards(cpu):
+    motherboardList = graph.run(
+        "MATCH (motherboard:Motherboard)-[:COMPATIBLE]->(cpu:CPU {name: '%s'}) return motherboard"
+        % cpu
+    ).data()
+    return motherboardList
+
+
+def serve_rams():
+    ramList = graph.run("MATCH (ram:RAM) RETURN ram").data()
+    return ramList
+
+
+def serve_storages():
+    storageList = graph.run("MATCH (storage:Storage) RETURN storage").data()
+    return storageList
+
+
+def serve_video_cards():
+    video_cardList = graph.run("MATCH (video_card:VideoCard) RETURN video_card").data()
+    return video_cardList
+
+
+def serve_cpu_coolers():
+    cpu_coolerList = graph.run("MATCH (cpu_cooler:CPUCooler) RETURN cpu_cooler").data()
+    return cpu_coolerList
+
+
+def serve_cases():
+    caseList = graph.run("MATCH (case:Case) RETURN case").data()
+    return caseList
+
+
+def serve_power_supplies():
+    power_supplyList = graph.run(
+        "MATCH (power_supply:PowerSupply) RETURN power_supply"
+    ).data()
+    return power_supplyList
+
+
+def serve_operating_systems():
+    operating_systemList = graph.run(
+        "MATCH (operating_system:OperatingSystem) RETURN operating_system"
+    ).data()
+    return operating_systemList

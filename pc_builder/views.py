@@ -1,5 +1,15 @@
 from .models import User
-from .models import serve_cpus
+from .models import (
+    serve_cpus,
+    serve_motherboards,
+    serve_rams,
+    serve_storages,
+    serve_video_cards,
+    serve_cpu_coolers,
+    serve_cases,
+    serve_power_supplies,
+    serve_operating_systems,
+)
 from flask import (
     Flask,
     request,
@@ -94,6 +104,11 @@ def add_pcbuild():
     )
 
 
+@app.route("/delete_pcbuild/<id>")
+def delete_pcbuild(id):
+    return User(session["username"]).delete_pcbuild(id)
+
+
 @app.route("/cpus")
 def cpus():
     cpuList = serve_cpus()
@@ -102,56 +117,56 @@ def cpus():
 
 
 @app.route("/motherboards/<cpu>")
-def serve_motherboards(cpu):
-    motherboardList = User(session["username"]).serve_motherboards(cpu)
+def motherboards(cpu):
+    motherboardList = serve_motherboards(cpu)
     motherboardList = jsonify(motherboardList=motherboardList)
     return motherboardList
 
 
 @app.route("/rams")
-def serve_rams():
-    ramList = User(session["username"]).serve_rams()
+def rams():
+    ramList = serve_rams()
     ramList = jsonify(ramList=ramList)
     return ramList
 
 
 @app.route("/storages")
-def serve_storages():
-    storageList = User(session["username"]).serve_storages()
+def storages():
+    storageList = serve_storages()
     storageList = jsonify(storageList=storageList)
     return storageList
 
 
 @app.route("/video_cards")
-def serve_video_cards():
-    video_cardList = User(session["username"]).serve_video_cards()
+def video_cards():
+    video_cardList = serve_video_cards()
     video_cardList = jsonify(video_cardList=video_cardList)
     return video_cardList
 
 
 @app.route("/cpu_coolers")
-def serve_cpu_coolers():
-    cpu_coolerList = User(session["username"]).serve_cpu_coolers()
+def cpu_coolers():
+    cpu_coolerList = serve_cpu_coolers()
     cpu_coolerList = jsonify(cpu_coolerList=cpu_coolerList)
     return cpu_coolerList
 
 
 @app.route("/cases")
-def serve_cases():
-    caseList = User(session["username"]).serve_cases()
+def cases():
+    caseList = serve_cases()
     caseList = jsonify(caseList=caseList)
     return caseList
 
 
 @app.route("/power_supplies")
-def serve_power_supplies():
-    power_suppliesList = User(session["username"]).serve_power_supplies()
+def power_supplies():
+    power_suppliesList = serve_power_supplies()
     power_suppliesList = jsonify(power_suppliesList=power_suppliesList)
     return power_suppliesList
 
 
-@app.route("/opearating_systems")
-def serve_operating_systems():
-    operating_systemList = User(session["username"]).serve_operating_systems()
+@app.route("/operating_systems")
+def operating_systems():
+    operating_systemList = serve_operating_systems()
     operating_systemList = jsonify(operating_systemList=operating_systemList)
     return operating_systemList
