@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import jsonify
 import os
 import uuid
+import json
 
 graph = Graph("bolt://localhost:7687", auth=("neo4j", "test"))
 
@@ -18,6 +19,16 @@ class User:
             "MATCH (user:User { username: '%s'} ) RETURN user" % self.username
         ).data()
         return user
+
+    def update_user_data(self, first_name=None, last_name=None, email=None):
+        data = {}
+        if first_name:
+            data["first_name"] = first_name
+        if last_name:
+            data["last_name"] = last_name
+        if email:
+            data["email"] = email
+        return data
 
     def findCpu(self, cpu):
         cpu = graph.run("MATCH (cpu:CPU { name: '%s'} ) RETURN cpu" % cpu).data()

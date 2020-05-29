@@ -68,14 +68,31 @@ def authenticate(username):
         return jsonify(response="false")
 
 
+@app.route("/update_user_data/<username>", methods=["GET", "POST"])
+def update_user_data(username):
+    if request.method == "POST":
+        first_name = None
+        last_name = None
+        email = None
+        requestData = request.get_json()
+        if "first_name" in requestData:
+            first_name = requestData["first_name"]
+        if "last_name" in requestData:
+            last_name = requestData["last_name"]
+        if "email" in requestData:
+            email = requestData["email"]
+
+    return User(username).update_user_data(first_name, last_name, email)
+
+
 @app.route("/profile/<username>")
 def profile(username):
     logged_in_user = session.get("username")
 
-    if logged_in_user:
-        return "Ovo je profil hehe"
+    if logged_in_user == username:
+        return jsonify(response=User(username).find())
     else:
-        return "Please login"
+        return jsonify(response="fail")
 
 
 @app.route("/add_pcbuild", methods=["GET", "POST"])
