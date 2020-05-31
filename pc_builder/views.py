@@ -9,6 +9,7 @@ from .models import (
     serve_cases,
     serve_power_supplies,
     serve_operating_systems,
+    graph,
 )
 from flask import (
     Flask,
@@ -20,6 +21,10 @@ from flask import (
     flash,
     jsonify,
 )
+from .commands import import_database
+import click
+from flask.cli import with_appcontext
+
 
 app = Flask(__name__)
 
@@ -68,8 +73,9 @@ def authenticate(username):
         return jsonify(response="false")
 
 
-@app.route("/update_user_data/<username>", methods=["GET", "POST"])
-def update_user_data(username):
+@app.route("/update_user_data/", methods=["GET", "POST"])
+def update_user_data():
+    username = session.get("username")
     if request.method == "POST":
         first_name = None
         last_name = None
@@ -83,6 +89,12 @@ def update_user_data(username):
             email = requestData["email"]
 
     return User(username).update_user_data(first_name, last_name, email)
+
+
+@app.route("/add_favourite/<component>/<name>")
+def add_favourite(component, name):
+    username = session.get("username")
+    return User(username).add_to_favourite(component, name)
 
 
 @app.route("/profile/<username>")
@@ -187,3 +199,15 @@ def operating_systems():
     operating_systemList = serve_operating_systems()
     operating_systemList = jsonify(operating_systemList=operating_systemList)
     return operating_systemList
+
+
+# @click.command()
+# @with_appcontext
+@app.cli.command("import_db")
+def import_db():
+    print("Importing database...")
+    import_database()
+    print("Database imported.")
+
+
+app.cli.add_command(import_db)

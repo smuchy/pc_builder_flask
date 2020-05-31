@@ -21,12 +21,25 @@ class User:
         return user
 
     def update_user_data(self, first_name=None, last_name=None, email=None):
+        user = self.find()
         data = {}
         if first_name:
+            graph.run(
+                "MATCH (user:User {username: '%(username)s'} ) SET user.first_name='%(first_name)s'"
+                % {"username": user[0]["user"]["username"], "first_name": first_name}
+            )
             data["first_name"] = first_name
         if last_name:
+            graph.run(
+                "MATCH (user:User {username: '%(username)s'} ) SET user.last_name='%(last_name)s'"
+                % {"username": user[0]["user"]["username"], "last_name": last_name}
+            )
             data["last_name"] = last_name
         if email:
+            graph.run(
+                "MATCH (user:User {username: '%(username)s'} ) SET user.email='%(email)s'"
+                % {"username": user[0]["user"]["username"], "email": email}
+            )
             data["email"] = email
         return data
 
@@ -139,6 +152,18 @@ class User:
             % {"username": user[0]["user"]["username"], "buildID": buildID}
         )
 
+        return jsonify(response="success")
+
+    def add_to_favourite(self, component, name):
+        user = self.find()
+        graph.run(
+            "MATCH (user:User),(component:%(component)s) where user.username = '%(username)s' and component.name = '%(name)s' create (user)-[r:FAVOURITE]->(component)"
+            % {
+                "component": component,
+                "username": user[0]["user"]["username"],
+                "name": name,
+            }
+        )
         return jsonify(response="success")
 
     def delete_pcbuild(self, id):
