@@ -67,8 +67,11 @@ def logout():
 @app.route("/authenticate/<username>")
 def authenticate(username):
 
-    if username == session["username"]:
-        return jsonify(response="true")
+    if "username" in session:
+        if username == session["username"]:
+            return jsonify(response="true")
+        else:
+            return jsonify(response="false")
     else:
         return jsonify(response="false")
 
