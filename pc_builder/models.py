@@ -166,6 +166,18 @@ class User:
         )
         return jsonify(response="success")
 
+    def remove_favourite(self, component, name):
+        user = self.find()
+        graph.run(
+            "MATCH (user:User {username: '%(username)s'})-[r:FAVOURITE]->(component:%(component)s {name: '%(name)s'}) delete r"
+            % {
+                "component": component,
+                "username": user[0]["user"]["username"],
+                "name": name,
+            }
+        )
+        return jsonify(response="success")
+
     def delete_pcbuild(self, id):
         user = self.find()
         graph.run(

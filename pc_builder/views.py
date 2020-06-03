@@ -97,6 +97,12 @@ def add_favourite(component, name):
     return User(username).add_to_favourite(component, name)
 
 
+@app.route("/remove_favourite/<component>/<name>")
+def remove_favourite(component, name):
+    username = session.get("username")
+    return User(username).remove_favourite(component, name)
+
+
 @app.route("/profile/<username>")
 def profile(username):
     logged_in_user = session.get("username")
@@ -141,7 +147,7 @@ def delete_pcbuild(id):
 @app.route("/cpus")
 def cpus():
     cpuList = serve_cpus()
-    cpuList = jsonify(cpuList=cpuList)
+    cpuList = jsonify(componentList=cpuList)
     return cpuList
 
 
@@ -155,35 +161,35 @@ def motherboards(cpu):
 @app.route("/rams")
 def rams():
     ramList = serve_rams()
-    ramList = jsonify(ramList=ramList)
+    ramList = jsonify(componentList=ramList)
     return ramList
 
 
 @app.route("/storages")
 def storages():
     storageList = serve_storages()
-    storageList = jsonify(storageList=storageList)
+    storageList = jsonify(componentList=storageList)
     return storageList
 
 
 @app.route("/video_cards")
 def video_cards():
     video_cardList = serve_video_cards()
-    video_cardList = jsonify(video_cardList=video_cardList)
+    video_cardList = jsonify(componentList=video_cardList)
     return video_cardList
 
 
 @app.route("/cpu_coolers")
 def cpu_coolers():
     cpu_coolerList = serve_cpu_coolers()
-    cpu_coolerList = jsonify(cpu_coolerList=cpu_coolerList)
+    cpu_coolerList = jsonify(componentList=cpu_coolerList)
     return cpu_coolerList
 
 
 @app.route("/cases")
 def cases():
     caseList = serve_cases()
-    caseList = jsonify(caseList=caseList)
+    caseList = jsonify(componentList=caseList)
     return caseList
 
 
