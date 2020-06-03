@@ -196,14 +196,14 @@ def cases():
 @app.route("/power_supplies")
 def power_supplies():
     power_suppliesList = serve_power_supplies()
-    power_suppliesList = jsonify(power_suppliesList=power_suppliesList)
+    power_suppliesList = jsonify(componentList=power_suppliesList)
     return power_suppliesList
 
 
 @app.route("/operating_systems")
 def operating_systems():
     operating_systemList = serve_operating_systems()
-    operating_systemList = jsonify(operating_systemList=operating_systemList)
+    operating_systemList = jsonify(componentList=operating_systemList)
     return operating_systemList
 
 
