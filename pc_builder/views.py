@@ -1,3 +1,4 @@
+from __future__ import print_function
 from .models import User
 from .models import (
     serve_cpus,
@@ -20,6 +21,15 @@ from flask import (
     render_template,
     flash,
     jsonify,
+    json,
+)
+from flask_cors import CORS
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+    get_raw_jwt,
 )
 from .commands import import_database
 import click
@@ -27,6 +37,20 @@ from flask.cli import with_appcontext
 
 
 app = Flask(__name__)
+
+app.config["JWT_SECRET_KEY"] = "secret"
+app.config["JWT_BLACKLIST_ENABLED"] = True
+app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access"]
+
+jwt = JWTManager(app)
+blacklist = set()
+CORS(app)
+
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    jti = decrypted_token["jti"]
+    return jti in blacklist
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -50,30 +74,46 @@ def login():
     if request.method == "POST":
         username = request.get_json()["username"]
         password = request.get_json()["password"]
+        response = ""
 
-    if not User(username).verify_password(password):
-        return jsonify(response="fail")
+    user = User(username).verify_password(password)
+    if user == False:
+        return jsonify({"error": "Invalid username or password"})
     else:
-        session["username"] = username
-        return jsonify(response="success")
+        access_token = create_access_token(
+            identity={"username": user["username"], "email": user["email"],}
+        )
+        result = jsonify({"token": access_token})
+    return result
 
 
 @app.route("/logout")
+@jwt_required
 def logout():
-    session.pop("username", None)
-    return jsonify(response="success")
+    jti = get_raw_jwt()["jti"]
+    blacklist.add(jti)
+    return jsonify({"msg": "Successfully logged out."})
 
 
-@app.route("/authenticate/<username>")
-def authenticate(username):
+@app.route("/protected", methods=["GET"])
+@jwt_required
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user)
 
-    if "username" in session:
-        if username == session["username"]:
-            return jsonify(response="true")
-        else:
-            return jsonify(response="false")
-    else:
-        return jsonify(response="false")
+
+# @app.route("/authenticate/<username>")
+# def authenticate(username):
+
+#     print(session["username"])
+#     if "username" in session:
+#         return username
+#         if username == session["username"]:
+#             return jsonify(response="true")
+#         else:
+#             return jsonify(response="false")
+#     else:
+#         return jsonify(response="false")
 
 
 @app.route("/update_user_data/", methods=["GET", "POST"])
