@@ -171,7 +171,19 @@ class User:
             % {"username": user[0]["user"]["username"], "buildID": buildID}
         )
 
-        return jsonify(response="success")
+        result = {
+            "id": buildID,
+            "cpu": cpu,
+            "motherboard": motherboard,
+            "ram": ram,
+            "storage": storage,
+            "video_card": video_card,
+            "cpu_cooler": cpu_cooler,
+            "case": case,
+            "power_supply": power_supply,
+            "operating_system": operating_system,
+        }
+        return jsonify(result)
 
     def add_to_favourite(self, component, name):
         user = self.find()
