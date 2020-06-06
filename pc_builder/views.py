@@ -33,6 +33,7 @@ from flask_jwt_extended import (
 )
 from .commands import import_database
 import click
+from datetime import timedelta
 from flask.cli import with_appcontext
 
 
@@ -80,7 +81,8 @@ def login():
         return jsonify({"error": "Invalid username or password"})
     else:
         access_token = create_access_token(
-            identity={"username": user["username"], "email": user["email"],}
+            identity={"username": user["username"], "email": user["email"],},
+            expires_delta=False,
         )
         result = jsonify({"token": access_token})
     return result
