@@ -119,6 +119,22 @@ class User:
         else:
             return False
 
+    def get_pcbuilds(self):
+        user = self.find()
+        builds = graph.run(
+            "MATCH (user:User {username: '%(username)s'})-[r:BUILT]->(build:Build) return build"
+            % {"username": user[0]["user"]["username"]}
+        ).data()
+        return builds
+
+    def get_favourites(self):
+        user = self.find()
+        favourites = graph.run(
+            "MATCH (user:User {username: '%(username)s'})-[r:FAVOURITE]->(component) return component"
+            % {"username": user[0]["user"]["username"]}
+        ).data()
+        return favourites
+
     def add_pcbuild(
         self,
         cpu,

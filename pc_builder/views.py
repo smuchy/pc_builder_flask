@@ -65,7 +65,6 @@ def register():
     if not User(username).register(password, first_name, last_name, email):
         return jsonify(response="fail")
     else:
-        # session["username"] = username
         return jsonify(response="success")
 
 
@@ -99,7 +98,7 @@ def logout():
 @jwt_required
 def protected():
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user)
+    return jsonify(logged_in_as=current_user["username"])
 
 
 # @app.route("/authenticate/<username>")
@@ -117,8 +116,9 @@ def protected():
 
 
 @app.route("/update_user_data/", methods=["GET", "POST"])
+@jwt_required
 def update_user_data():
-    username = session.get("username")
+    username = get_jwt_identity()["username"]
     if request.method == "POST":
         first_name = None
         last_name = None
@@ -135,28 +135,44 @@ def update_user_data():
 
 
 @app.route("/add_favourite/<component>/<name>")
+@jwt_required
 def add_favourite(component, name):
-    username = session.get("username")
+    username = get_jwt_identity()["username"]
     return User(username).add_to_favourite(component, name)
 
 
 @app.route("/remove_favourite/<component>/<name>")
+@jwt_required
 def remove_favourite(component, name):
-    username = session.get("username")
+    username = get_jwt_identity()["username"]
     return User(username).remove_favourite(component, name)
 
 
-@app.route("/profile/<username>")
-def profile(username):
-    logged_in_user = session.get("username")
+@app.route("/profile")
+@jwt_required
+def profile():
+    logged_in_user = get_jwt_identity()["username"]
+    return jsonify(response=User(logged_in_user).find())
 
-    if logged_in_user == username:
-        return jsonify(response=User(username).find())
-    else:
-        return jsonify(response="fail")
+
+@app.route("/get_pcbuilds")
+@jwt_required
+def get_pcbuilds():
+    username = get_jwt_identity()["username"]
+    builds = jsonify(builds=User(username).get_pcbuilds())
+    return builds
+
+
+@app.route("/get_favourites")
+@jwt_required
+def get_favourites():
+    username = get_jwt_identity()["username"]
+    favourites = jsonify(favourites=User(username).get_favourites())
+    return favourites
 
 
 @app.route("/add_pcbuild", methods=["GET", "POST"])
+@jwt_required
 def add_pcbuild():
     if request.method == "POST":
         cpu = request.get_json()["cpu"]
@@ -169,7 +185,7 @@ def add_pcbuild():
         power_supply = request.get_json()["power_supply"]
         operating_system = request.get_json()["operating_system"]
 
-    return User(session["username"]).add_pcbuild(
+    return User(get_jwt_identity()["username"]).add_pcbuild(
         cpu,
         motherboard,
         ram,
@@ -183,8 +199,9 @@ def add_pcbuild():
 
 
 @app.route("/delete_pcbuild/<id>")
+@jwt_required
 def delete_pcbuild(id):
-    return User(session["username"]).delete_pcbuild(id)
+    return User(get_jwt_identity()["username"]).delete_pcbuild(id)
 
 
 @app.route("/cpus")
