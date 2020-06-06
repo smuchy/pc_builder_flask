@@ -171,6 +171,8 @@ class User:
             % {"username": user[0]["user"]["username"], "buildID": buildID}
         )
 
+        caseObj = {"name": case, "image": self.findCase(case)[0]["case"]["image"]}
+
         result = {
             "id": buildID,
             "cpu": cpu,
@@ -179,7 +181,7 @@ class User:
             "storage": storage,
             "video_card": video_card,
             "cpu_cooler": cpu_cooler,
-            "case": case,
+            "case": caseObj,
             "power_supply": power_supply,
             "operating_system": operating_system,
         }
