@@ -143,11 +143,11 @@ def add_favourite(component, name):
     return User(username).add_to_favourite(component, name)
 
 
-@app.route("/remove_favourite/<component>/<name>")
+@app.route("/remove_favourite/<name>")
 @jwt_required
-def remove_favourite(component, name):
+def remove_favourite(name):
     username = get_jwt_identity()["username"]
-    return User(username).remove_favourite(component, name)
+    return User(username).remove_favourite(name)
 
 
 @app.route("/profile")

@@ -200,15 +200,11 @@ class User:
         )
         return jsonify(response="success")
 
-    def remove_favourite(self, component, name):
+    def remove_favourite(self, name):
         user = self.find()
         graph.run(
-            "MATCH (user:User {username: '%(username)s'})-[r:FAVOURITE]->(component:%(component)s {name: '%(name)s'}) delete r"
-            % {
-                "component": component,
-                "username": user[0]["user"]["username"],
-                "name": name,
-            }
+            "MATCH (user:User {username: '%(username)s'})-[r:FAVOURITE]->(component) where component.name='%(name)s' delete r"
+            % {"username": user[0]["user"]["username"], "name": name,}
         )
         return jsonify(response="success")
 
