@@ -159,6 +159,7 @@ class User:
             video_card=self.findVideoCard(video_card)[0]["video_card"]["name"],
             cpu_cooler=self.findCpuCooler(cpu_cooler)[0]["cpu_cooler"]["name"],
             case=self.findCase(case)[0]["case"]["name"],
+            caseImage=self.findCase(case)[0]["case"]["image"],
             power_supply=self.findPowerSupply(power_supply)[0]["power_supply"]["name"],
             operating_system=self.findOperatingSystem(operating_system)[0][
                 "operating_system"
